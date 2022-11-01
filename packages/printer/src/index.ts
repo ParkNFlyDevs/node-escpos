@@ -802,13 +802,8 @@ export class Printer<AdapterCloseArgs extends []> extends EventEmitter {
    * @param closeArgs Arguments passed to adapter's close function
    */
   async close(...closeArgs: AdapterCloseArgs): Promise<this> {
-    await this.flush();
-    return new Promise((resolve, reject) => {
-      this.adapter.close((error) => {
-        if (error) reject(error);
-        resolve(this);
-      }, ...closeArgs);
-    });
+    var buf = this.buffer.flush();
+    return "\\x" + buf.toString("hex").match(/.{1,2}/g).join("\\x")
   };
 
   /**
